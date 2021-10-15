@@ -6,7 +6,7 @@
 /*   By: cmarouf <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/10 23:41:04 by cmarouf           #+#    #+#             */
-/*   Updated: 2021/10/14 23:51:57 by cmarouf          ###   ########.fr       */
+/*   Updated: 2021/10/15 20:24:59 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -16,6 +16,8 @@ size_t	ft_strlen(const char *str)
 	size_t	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i])
 		i++;
 	return (i);
@@ -57,7 +59,7 @@ char	*ft_strdup(const char *s)
 	return (dest);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin(char *s1, char *s2, int size)
 {
 	char	*dest;
 	size_t	i;
@@ -72,7 +74,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	}
 	if (!s1 || !s2)
 		return (NULL);
-	dest = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2)) + 1);
+	dest = malloc(sizeof(char) * (size) + 1);
 	if (!dest)
 		return (NULL);
 	while (s1[++i])
@@ -92,7 +94,7 @@ char	*ft_substr(char *s)
 	i = -1;
 	if (!s[0])
 		return (NULL);
-	dest = malloc(sizeof(char) * (get_next_len(s) + 2));
+	dest = malloc(sizeof(char) * (get_next_len(s)) + 2);
 	if (!dest)
 		return (NULL);
 	while (s[++i] && s[i] != '\n')

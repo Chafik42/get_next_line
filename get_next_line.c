@@ -6,7 +6,7 @@
 /*   By: cmarouf <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/13 02:52:53 by cmarouf           #+#    #+#             */
-/*   Updated: 2021/10/14 23:57:04 by cmarouf          ###   ########.fr       */
+/*   Updated: 2021/10/15 20:35:58 by cmarouf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -21,7 +21,7 @@ size_t	get_next_len(char *str)
 	return (i);
 }
 
-char	*update_memory(char	*lines)
+char	*delete_return(char	*lines)
 {
 	char	*tmp;
 	int		i;
@@ -48,7 +48,7 @@ char	*update_memory(char	*lines)
 	return (NULL);
 }
 
-static char	*read_file(int fd, char *lines)
+static char	*read_file(int fd, char *lines, int size)
 {
 	int		buffend;
 	char	*buffer;
@@ -58,20 +58,18 @@ static char	*read_file(int fd, char *lines)
 		return (NULL);
 	buffer[0] = '\0';
 	buffend = 1;
-	if (!ft_strchr(lines, '\n'))
+	while (!ft_strchr(buffer, '\n') && buffend > 0)
 	{
-		while (!ft_strchr(buffer, '\n') && buffend > 0)
+		buffend = read(fd, buffer, BUFFER_SIZE);
+		if (buffend == -1)
 		{
-			buffend = read(fd, buffer, BUFFER_SIZE);
-			if (buffend == -1)
-			{
-				free(lines);
-				free(buffer);
-				return (NULL);
-			}
-			buffer[buffend] = '\0';
-			lines = ft_strjoin(lines, buffer);
+			free(lines);
+			free(buffer);
+			return (NULL);
 		}
+		buffer[buffend] = '\0';
+		size = size + buffend;
+		lines = ft_strjoin(lines, buffer, size);
 	}
 	free(buffer);
 	return (lines);
@@ -80,14 +78,14 @@ static char	*read_file(int fd, char *lines)
 char	*get_next_line(int fd)
 {
 	char			*line;
-	static char		*memory = NULL;
+	static char		*file = NULL;
 
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	memory = read_file(fd, memory);
-	if (!memory)
+	file = read_file(fd, file, ft_strlen(file));
+	if (!file)
 		return (NULL);
-	line = ft_substr(memory);
-	memory = update_memory(memory);
+	line = ft_substr(file);
+	file = delete_return(file);
 	return (line);
 }
